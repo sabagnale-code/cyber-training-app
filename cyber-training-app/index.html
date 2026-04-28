@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cybersecurity Training</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">CT</div>
+            <div>
+                <h2>CyberTrain</h2>
+                <p>Security Learning Hub</p>
+            </div>
+        </div>
+
+        <nav class="nav">
+            <button class="nav-btn active" data-section="dashboard">Dashboard</button>
+            <button class="nav-btn" data-section="courses">Courses</button>
+            <button id="nav-reports" class="nav-btn" data-section="reports">Reports</button>
+            <button class="nav-btn" data-section="settings">Settings</button>
+        </nav>
+
+        <section class="users-panel">
+            <h3>User Risk Register</h3>
+            <ul>
+                <li><span class="dot medium"></span>BlueFalcon-17 <em>Medium Risk</em></li>
+                <li><span class="dot medium"></span>CipherMango-04 <em>Medium Risk</em></li>
+                <li><span class="dot medium"></span>NovaKey-88 <em>Medium Risk</em></li>
+                <li><span class="dot medium"></span>ShadowByte-22 <em>Medium Risk</em></li>
+                <li><span class="dot low"></span>VectorPanda-61 <em>Low Risk</em></li>
+            </ul>
+        </section>
+
+        <button id="logout-btn" class="logout-btn">Logout</button>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <h1 id="page-title">Cybersecurity Training Dashboard</h1>
+            <div class="topbar-actions">
+                <span id="welcomeText" class="status-pill">Welcome</span>
+                <button class="mode-btn" onclick="switchMode('user')">User View</button>
+                <button class="mode-btn" onclick="switchMode('admin')">Admin View</button>
+                <span class="status-pill">Live Session</span>
+            </div>
+        </header>
+
+        <section id="dashboard" class="content-section">
+            <div id="adminDashboardContent" class="dashboard-grid">
+            <div class="card dashboard-card">
+                <h2>Employee Risk Levels</h2>
+                <button id="startTrainingBtn" class="settings-action-btn start-training-btn">Start Training Mission</button>
+                <div class="risk-visual">
+                    <div class="risk-donut" aria-hidden="true">
+                        <span>Risk Mix</span>
+                    </div>
+                    <div class="risk-bars">
+                        <div><span>Low Risk</span><div class="bar"><i id="risk-low-bar" style="width: 62%; background:#22c55e;"></i></div></div>
+                        <div><span>Medium Risk</span><div class="bar"><i id="risk-med-bar" style="width: 28%; background:#eab308;"></i></div></div>
+                        <div><span>High Risk</span><div class="bar"><i id="risk-high-bar" style="width: 10%; background:#ef4444;"></i></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card dashboard-card">
+                <h2>Announcements</h2>
+                <ul class="announcement-list">
+                    <li><strong>New phishing simulation:</strong> Campaign goes live Friday at 2 PM.</li>
+                    <li><strong>Policy update:</strong> Password manager is now mandatory for all teams.</li>
+                    <li><strong>Reminder:</strong> Report suspicious emails using the security button.</li>
+                </ul>
+            </div>
+
+            <div class="card dashboard-card">
+                <h2>Security Controls</h2>
+                <div class="kpi-row">
+                    <div class="kpi-chip"><strong>96%</strong><span>MFA</span></div>
+                    <div class="kpi-chip"><strong>89%</strong><span>Patching</span></div>
+                    <div class="kpi-chip"><strong>94%</strong><span>EDR</span></div>
+                </div>
+                <ul class="announcement-list">
+                    <li><strong>MFA Enforcement:</strong> 96% enabled across active accounts.</li>
+                    <li><strong>Endpoint Protection:</strong> 4 devices missing latest signature update.</li>
+                    <li><strong>Patch Compliance:</strong> 89% of systems patched in current cycle.</li>
+                </ul>
+            </div>
+
+            <div class="card dashboard-card">
+                <h2>Open Security Alerts</h2>
+                <div class="alert-stack">
+                    <div id="alert-high-pill" class="alert-pill alert-high">2 High</div>
+                    <div id="alert-med-pill" class="alert-pill alert-med">5 Medium</div>
+                    <div id="alert-low-pill" class="alert-pill alert-low">8 Low</div>
+                </div>
+                <ul class="announcement-list">
+                    <li><strong>2 High:</strong> Reused credentials detected in dark web monitoring.</li>
+                    <li><strong>5 Medium:</strong> Suspicious login attempts blocked by policy.</li>
+                    <li><strong>8 Low:</strong> Devices pending auto-lock timeout configuration.</li>
+                </ul>
+            </div>
+
+            <div class="card dashboard-card">
+                <div class="leaderboard dashboard-full">
+                    <div class="leaderboard-head">
+                        <h3>Leadership Board</h3>
+                        <span>This Week</span>
+                    </div>
+                    <ul id="leaderboard-list"></ul>
+                </div>
+            </div>
+
+            <div class="card dashboard-card">
+                <div class="badges">
+                    <div class="badges-head">
+                        <h3>Badge Vault</h3>
+                        <span id="badge-count">0 unlocked</span>
+                    </div>
+                    <div id="badges-grid" class="badges-grid"></div>
+                </div>
+            </div>
+
+            <div class="card dashboard-card dashboard-wide">
+                <h2>Risk Trend (Last 7 Days)</h2>
+                <div class="trend-chart" aria-hidden="true">
+                    <span style="height: 34%;"></span>
+                    <span style="height: 42%;"></span>
+                    <span style="height: 38%;"></span>
+                    <span style="height: 54%;"></span>
+                    <span style="height: 49%;"></span>
+                    <span style="height: 66%;"></span>
+                    <span style="height: 58%;"></span>
+                </div>
+            </div>
+            </div>
+
+            <div id="userDashboardContent" class="dashboard-grid hidden">
+                <div class="card dashboard-card">
+                    <h2>Your Security Snapshot</h2>
+                    <ul class="announcement-list">
+                        <li><strong>Your Risk Level:</strong> <span id="userRiskLabel">Medium</span></li>
+                        <li><strong>Training Completion:</strong> <span id="userCompletionLabel">0%</span></li>
+                        <li><strong>Current Mission Score:</strong> <span id="userScoreLabel">0 XP</span></li>
+                    </ul>
+                    <button id="userStartTrainingBtn" class="settings-action-btn start-training-btn">Continue Training</button>
+                </div>
+
+                <div class="card dashboard-card">
+                    <h2>Your Badge Progress</h2>
+                    <ul class="announcement-list">
+                        <li><strong>Unlocked:</strong> <span id="userBadgeCount">0</span> badges</li>
+                        <li><strong>Next Target:</strong> Perfect Guard</li>
+                        <li><strong>Tip:</strong> Finish with full integrity to lower personal risk.</li>
+                    </ul>
+                </div>
+
+                <div class="card dashboard-card">
+                    <div class="leaderboard dashboard-full">
+                        <div class="leaderboard-head">
+                            <h3>Leadership Board</h3>
+                            <span>This Week</span>
+                        </div>
+                        <ul id="user-leaderboard-list"></ul>
+                    </div>
+                </div>
+
+                <div class="card dashboard-card">
+                    <h2>Your Avatar</h2>
+                    <div class="avatar-stage" aria-hidden="true">
+                        <div class="avatar-glow"></div>
+                        <div class="avatar-figure">
+                            <span class="avatar-head"></span>
+                            <span class="avatar-body"></span>
+                            <span class="avatar-arm left"></span>
+                            <span class="avatar-arm right"></span>
+                            <span class="avatar-leg left"></span>
+                            <span class="avatar-leg right"></span>
+                        </div>
+                    </div>
+                    <p class="subtitle">Training champion in progress.</p>
+                </div>
+
+                <div class="card dashboard-card dashboard-wide">
+                    <div class="badges">
+                        <div class="badges-head">
+                            <h3>Badge Vault</h3>
+                            <span id="user-badge-count">0 unlocked</span>
+                        </div>
+                        <div id="user-badges-grid" class="badges-grid"></div>
+                    </div>
+                </div>
+
+                <div class="card dashboard-card dashboard-wide">
+                    <h2>Your Activity Trend</h2>
+                    <div class="trend-chart" aria-hidden="true">
+                        <span style="height: 20%;"></span>
+                        <span style="height: 30%;"></span>
+                        <span style="height: 44%;"></span>
+                        <span style="height: 40%;"></span>
+                        <span style="height: 56%;"></span>
+                        <span style="height: 62%;"></span>
+                        <span style="height: 72%;"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="courses" class="card training-card content-section hidden">
+            <div class="burn-overlay" aria-hidden="true"></div>
+            <p class="subtitle">Make the right decision in real-world scenarios</p>
+            <button id="startCourseBtn" class="settings-action-btn start-training-btn">Start Training Mission</button>
+            <div class="hud">
+                <div class="hud-item"><span>Threat Level</span><strong id="threat-level">LOW</strong></div>
+                <div class="hud-item"><span>Response Timer</span><strong id="timer">12s</strong></div>
+                <div class="hud-item"><span>System Integrity</span><strong id="lives">3/3</strong></div>
+            </div>
+            <div class="progress-track">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+            <p id="missionProgress" class="subtitle">Mission Progress: 0%</p>
+            <div class="scenario-meta">
+                <span id="scenario-tag">Scenario</span>
+                <span id="scenario-stage">Stage</span>
+            </div>
+            <div class="escape-game">
+                <div class="escape-head">
+                    <strong>Live Threat Escape</strong>
+                    <span id="escape-status">Build distance from the threat.</span>
+                </div>
+                <div class="escape-track">
+                    <div class="track-zone danger-zone">Danger</div>
+                    <div class="track-zone safe-zone">Safe Zone</div>
+                    <div id="threat-token" class="track-token threat-token">
+                        <span class="token-avatar monster-avatar"></span>
+                        <span class="token-label">THREAT</span>
+                    </div>
+                    <div id="runner-token" class="track-token runner-token">
+                        <span class="token-avatar runner-avatar"></span>
+                        <span class="token-label">YOU</span>
+                    </div>
+                </div>
+            </div>
+            <h2 id="question"></h2>
+            <p id="dramatic" class="dramatic"></p>
+            <p id="explain" class="explain"></p>
+
+            <div id="course-options" class="options">
+                <button class="option" onclick="answer(0)"></button>
+                <button class="option" onclick="answer(1)"></button>
+                <button class="option" onclick="answer(2)"></button>
+            </div>
+
+            <div class="card-footer">
+                <p id="feedback"></p>
+                <div class="score-wrap">
+                    <p id="score">Score: 0</p>
+                    <p id="streak">Streak: 0</p>
+                </div>
+            </div>
+            <button id="restart-btn" class="restart-btn hidden" onclick="restartGame()">Run Mission Again</button>
+        </section>
+
+        <section id="reports" class="content-section hidden reports-page">
+            <div class="reports-header">
+                <h2>Security Reports</h2>
+                <div class="users-actions">
+                    <button class="settings-action-btn">Export PDF</button>
+                    <button class="settings-action-btn">Export CSV</button>
+                    <button class="settings-action-btn">Share Snapshot</button>
+                </div>
+            </div>
+
+            <div class="reports-kpis">
+                <div class="card reports-kpi"><strong>74%</strong><span>Training Completion</span></div>
+                <div class="card reports-kpi"><strong>287 XP</strong><span>Average Mission Score</span></div>
+                <div class="card reports-kpi"><strong>14</strong><span>Overdue Users</span></div>
+                <div class="card reports-kpi"><strong>-11%</strong><span>Medium Risk Reduction</span></div>
+            </div>
+
+            <div class="reports-grid">
+                <div class="card dashboard-card">
+                    <h3>Department Completion</h3>
+                    <div class="report-bars">
+                        <div><span>Finance</span><div class="bar"><i style="width: 82%; background:#22c55e;"></i></div></div>
+                        <div><span>HR</span><div class="bar"><i style="width: 77%; background:#3b82f6;"></i></div></div>
+                        <div><span>Sales</span><div class="bar"><i style="width: 69%; background:#eab308;"></i></div></div>
+                        <div><span>Engineering</span><div class="bar"><i style="width: 88%; background:#14b8a6;"></i></div></div>
+                    </div>
+                </div>
+
+                <div class="card dashboard-card">
+                    <h3>Incident Simulation Trend</h3>
+                    <div class="trend-chart" aria-hidden="true">
+                        <span style="height: 22%;"></span>
+                        <span style="height: 34%;"></span>
+                        <span style="height: 28%;"></span>
+                        <span style="height: 46%;"></span>
+                        <span style="height: 55%;"></span>
+                        <span style="height: 62%;"></span>
+                        <span style="height: 74%;"></span>
+                    </div>
+                </div>
+
+                <div class="card dashboard-card reports-wide">
+                    <h3>Compliance Snapshot</h3>
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>Policy</th>
+                                <th>Compliant</th>
+                                <th>Non-Compliant</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Password Manager Usage</td><td>86%</td><td>14%</td><td class="risk-med">Watchlist</td></tr>
+                            <tr><td>MFA Enrollment</td><td>96%</td><td>4%</td><td class="risk-low">Healthy</td></tr>
+                            <tr><td>Annual Policy Acknowledgment</td><td>81%</td><td>19%</td><td class="risk-med">Action Needed</td></tr>
+                            <tr><td>Endpoint Patch Window</td><td>89%</td><td>11%</td><td class="risk-low">Stable</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="settings" class="content-section hidden settings-page">
+            <div class="settings-header">
+                <h2>Settings</h2>
+                <p>Quick access to platform and cybersecurity administration settings.</p>
+            </div>
+            <div id="settings-overview">
+            <div id="learnItGroup" class="card settings-group">
+                <h3>Learn IT</h3>
+                <div class="settings-grid">
+                    <article class="settings-tile setting-action active admin-setting" data-setting="users">
+                        <h4>Users</h4>
+                        <p>Add, edit, and disable users.</p>
+                    </article>
+                    <article class="settings-tile setting-action admin-setting" data-setting="user-groups">
+                        <h4>User Groups</h4>
+                        <p>Create and manage department-based security groups.</p>
+                    </article>
+                    <article class="settings-tile setting-action admin-setting" data-setting="curriculum">
+                        <h4>Curriculum</h4>
+                        <p>Set course order by role and risk profile.</p>
+                    </article>
+                    <article class="settings-tile setting-action admin-setting" data-setting="coursework">
+                        <h4>Coursework</h4>
+                        <p>View completion and generate learning reports.</p>
+                    </article>
+                    <article class="settings-tile setting-action admin-setting" data-setting="new-courses">
+                        <h4>New Courses</h4>
+                        <p>Publish new modules and assign required teams.</p>
+                    </article>
+                </div>
+            </div>
+
+            <div class="card settings-group">
+                <h3>General</h3>
+                <div class="settings-grid">
+                    <article class="settings-tile setting-action" data-setting="account-settings">
+                        <h4>My Account Settings</h4>
+                        <p>Update profile, MFA options, and email alerts.</p>
+                    </article>
+                    <article class="settings-tile setting-action admin-setting" data-setting="company-settings">
+                        <h4>Company Settings</h4>
+                        <p>Manage organization details and security defaults.</p>
+                    </article>
+                </div>
+            </div>
+
+            <div class="card settings-group">
+                <h3>Manage IT</h3>
+                <div class="settings-grid">
+                    <article class="settings-tile setting-action" data-setting="broadcasts">
+                        <h4>Broadcasts</h4>
+                        <p>Send urgent cyber alerts and training reminders.</p>
+                    </article>
+                    <article class="settings-tile setting-action" data-setting="reports-center">
+                        <h4>Incident Reports</h4>
+                        <p>Download incident-focused and response drill reports.</p>
+                    </article>
+                    <article class="settings-tile setting-action" data-setting="incident-policies">
+                        <h4>Incident Policies</h4>
+                        <p>Review escalation and containment playbook settings.</p>
+                    </article>
+                </div>
+            </div>
+
+            <div class="card settings-group settings-detail">
+                <h3 id="setting-detail-title">Users</h3>
+                <p id="setting-detail-summary">Manage identity lifecycle and access risk from one place.</p>
+                <ul id="setting-detail-points" class="announcement-list"></ul>
+            </div>
+            </div>
+
+            <div id="users-management" class="card settings-group hidden">
+                <div class="users-head">
+                    <h3>Settings > Learn IT > Users</h3>
+                    <button id="users-back-btn" class="logout-btn users-back">Back</button>
+                </div>
+                <div class="users-actions">
+                    <button class="settings-action-btn">+ Add User</button>
+                    <button class="settings-action-btn">Provisioning</button>
+                    <button class="settings-action-btn">View Employee Risk</button>
+                    <button class="settings-action-btn">Print User List</button>
+                    <button class="settings-action-btn">Export CSV</button>
+                    <button class="settings-action-btn">Resend Unaccepted Invites</button>
+                    <button class="settings-action-btn">Disabled Users</button>
+                </div>
+                <div class="users-table-wrap">
+                    <div class="users-table-top">
+                        <span>20 of 77 users</span>
+                        <input class="users-search" placeholder="Search users">
+                    </div>
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Enabled</th>
+                                <th>Employee Risk</th>
+                                <th>Assigned Groups</th>
+                                <th>Last Signed In</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>BlueFalcon-17<br><small>user17@demo.local</small></td><td>Yes</td><td class="risk-med">Medium</td><td>1</td><td>Feb 11, 2026</td><td><button class="disable-btn">Disable</button></td></tr>
+                            <tr><td>CipherMango-04<br><small>cm04@sandbox.local</small></td><td>Yes</td><td class="risk-med">Medium</td><td>1</td><td>Jan 27, 2026</td><td><button class="disable-btn">Disable</button></td></tr>
+                            <tr><td>NovaKey-88<br><small>nk88@example.internal</small></td><td>Yes</td><td class="risk-med">Medium</td><td>1</td><td>Feb 19, 2026</td><td><button class="disable-btn">Disable</button></td></tr>
+                            <tr><td>ShadowByte-22<br><small>sb22@demo.local</small></td><td>Yes</td><td class="risk-med">Medium</td><td>1</td><td>Feb 18, 2026</td><td><button class="disable-btn">Disable</button></td></tr>
+                            <tr><td>VectorPanda-61<br><small>vp61@sandbox.local</small></td><td>Yes</td><td class="risk-low">Low</td><td>2</td><td>Feb 17, 2026</td><td><button class="disable-btn">Disable</button></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="generic-management" class="card settings-group hidden">
+                <div class="users-head">
+                    <h3 id="generic-title">Settings > Module</h3>
+                    <button id="generic-back-btn" class="logout-btn users-back">Back</button>
+                </div>
+                <div id="generic-actions" class="users-actions"></div>
+                <div class="users-table-wrap">
+                    <div class="users-table-top">
+                        <span id="generic-summary">Module overview</span>
+                    </div>
+                    <div id="generic-content" class="generic-content"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<div id="badge-master-overlay" class="badge-master-overlay hidden" aria-hidden="true">
+    <div class="badge-rays"></div>
+    <div class="badge-confetti">
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="badge-master-card">
+        <p class="badge-master-kicker">Ultimate Unlock</p>
+        <h2>BADGE MASTER</h2>
+        <p>All badges secured. Cyber mastery achieved.</p>
+        <p class="badge-master-sub">+500 Glory XP</p>
+    </div>
+</div>
+
+<div id="failure-overlay" class="failure-overlay hidden" aria-hidden="true">
+    <div class="failure-fire"></div>
+    <div class="failure-pit"></div>
+    <div class="falling-runner"></div>
+    <div class="failure-card">
+        <p class="failure-kicker">Breach Detected</p>
+        <h2 class="glitch-text" data-text="YOU HAVE BEEN HACKED">YOU HAVE BEEN HACKED</h2>
+        <p>You fell into the threat zone. Retrain and try again.</p>
+    </div>
+</div>
+
+<div id="badge-unlock-popup" class="badge-unlock-popup hidden" aria-hidden="true">
+    <div class="badge-unlock-card">
+        <div class="badge-figure" aria-hidden="true">
+            <span class="figure-head"></span>
+            <span class="figure-body"></span>
+            <span class="figure-arm"></span>
+            <span class="figure-badge"></span>
+        </div>
+        <p class="badge-unlock-kicker">New Badge Unlocked</p>
+        <h3 id="badge-unlock-title">Badge Name</h3>
+        <p id="badge-unlock-text">You earned this badge.</p>
+    </div>
+</div>
+
+<div id="toast" class="toast">Mission results synced to dashboard</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
