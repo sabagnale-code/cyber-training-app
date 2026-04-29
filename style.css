@@ -2063,6 +2063,71 @@ html[data-theme="dark"] .theme-toggle-btn {
     border-color: #334155;
 }
 
+/* Ensure full-page dark canvas (cards already use --card) */
+html[data-theme="dark"] .main-content {
+    background: transparent;
+}
+
+html[data-theme="dark"] .learning-summary {
+    border-color: #1e3a5f;
+    background: #0f172a;
+}
+
+html[data-theme="dark"] .learning-summary h3 {
+    color: #93c5fd;
+}
+
+html[data-theme="dark"] .learning-summary ul {
+    color: #cbd5e1;
+}
+
+html[data-theme="dark"] .leaderboard {
+    border-top-color: #1f2a3d;
+}
+
+html[data-theme="dark"] .settings-header p {
+    color: #94a3b8;
+}
+
+html[data-theme="dark"] .setting-action.active {
+    background: #172554;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+html[data-theme="dark"] .reports-kpi span {
+    color: #94a3b8;
+}
+
+html[data-theme="dark"] .reports-header h2 {
+    color: #f1f5f9;
+}
+
+html[data-theme="dark"] .generic-item {
+    background: var(--card);
+    border-color: #1f2a3d;
+}
+
+html[data-theme="dark"] .generic-item h4 {
+    color: #f1f5f9;
+}
+
+html[data-theme="dark"] .generic-item p {
+    color: #cbd5e1;
+}
+
+html[data-theme="dark"] .nav-btn {
+    background: transparent;
+    color: #e2e8f0;
+    border-color: #334155;
+}
+
+html[data-theme="dark"] .nav-btn.active {
+    background: #1d4ed8;
+    border-color: #2563eb;
+    color: #ffffff;
+}
+
 /* ============================================================
    Learning popup (post-mission lesson)
    ============================================================ */
