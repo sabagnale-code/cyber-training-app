@@ -686,6 +686,120 @@ function playNextBadgePopup() {
     showBadgeUnlockPopup(nextBadge);
 }
 
+const cyberLessons = {
+    "Social Engineering": {
+        lesson: "Attackers manipulate people through urgency, authority, or fear to extract info or access — the easiest way around any security system is to ask the human nicely (or scarily).",
+        daily: "Pause before you act on urgent emails, calls, or messages. If something feels rushed or unusual, verify it through a separate channel — call the person back on a known number before clicking, sharing, or paying.",
+        fact: "Roughly 98% of cyberattacks involve some form of social engineering. The cheapest tool in an attacker's kit isn't malware — it's a convincing email."
+    },
+    "Device Safety": {
+        lesson: "Unknown USB drives, public chargers, and unverified devices can install malware in seconds. Physical access often means full access.",
+        daily: "Treat any USB you didn't buy yourself as suspicious — hand it to IT instead of plugging it in. Lock your screen even for short coffee breaks, and use your own charger or a USB data blocker in public.",
+        fact: "In a famous study, researchers dropped 297 USB drives around a university campus — 48% were plugged in, often within minutes, no questions asked."
+    },
+    "Password Security": {
+        lesson: "Strong, unique passphrases plus a password manager defeat the vast majority of account takeover attempts. Reuse is the real vulnerability.",
+        daily: "Reusing one password across accounts means one breach unlocks them all. Use a password manager, turn on multi-factor authentication everywhere it's offered, and never share codes — not even with 'IT'.",
+        fact: "\"123456\" and \"password\" still top global breach lists every single year — and password-cracking tools always try those first. A 12-character random passphrase, by contrast, would take centuries to crack."
+    },
+    "Secure Data Handling": {
+        lesson: "Sensitive data needs to be encrypted in transit and at rest, and shared only through approved channels with the right people.",
+        daily: "Don't email customer data to personal accounts or paste it into random chatbots. Use approved cloud links with expiry, double-check the recipient list before hitting Send, and shred (don't bin) printed sensitive docs.",
+        fact: "A single misconfigured cloud storage bucket exposed 533 million Facebook user records in 2021 — no hacking required, the data was simply left publicly readable."
+    },
+    "Physical Security": {
+        lesson: "Tailgating, badge cloning, shoulder surfing, and unattended laptops bypass every digital control you have. The perimeter is wherever a person is.",
+        daily: "Don't hold the door for unbadged strangers — politely ask them to use reception. Lock your laptop when you step away (Win+L), and use a privacy screen on trains, planes, and cafes.",
+        fact: "Penetration testers report a >90% success rate getting into 'secure' offices just by carrying coffee, a laptop, and looking like they belong there."
+    }
+};
+
+const generalCyberFact = "The first computer worm — the Morris Worm in 1988 — infected an estimated 10% of the entire internet at the time… which was about 6,000 machines. Today, that's a fraction of one office building.";
+
+function buildLearningPopupContent(success) {
+    const mistakes = missionResults.filter((r) => !r.correct);
+    const strengths = missionResults.filter((r) => r.correct);
+    const categoriesMissed = [...new Set(mistakes.map((r) => r.category))];
+    const categoriesMastered = [...new Set(strengths.map((r) => r.category))];
+
+    const focusCategory = categoriesMissed[0] || categoriesMastered[0] || "Social Engineering";
+    const lesson = cyberLessons[focusCategory] || cyberLessons["Social Engineering"];
+
+    const takeawayList = document.getElementById("learning-popup-takeaways");
+    if (takeawayList) {
+        takeawayList.innerHTML = "";
+        const lines = [];
+        lines.push(success
+            ? "You completed the mission and practiced making safe calls under pressure."
+            : "You ran the mission and saw exactly where attackers gain ground when defenders hesitate.");
+        if (categoriesMastered.length) {
+            lines.push(`Strong areas today: ${categoriesMastered.join(", ")}.`);
+        }
+        if (categoriesMissed.length) {
+            lines.push(`Worth reviewing: ${categoriesMissed.join(", ")}.`);
+        }
+        lines.push(`Today's focus — ${focusCategory}: ${lesson.lesson}`);
+        lines.forEach((line) => {
+            const li = document.createElement("li");
+            li.textContent = line;
+            takeawayList.appendChild(li);
+        });
+    }
+
+    const dailyEl = document.getElementById("learning-popup-daily");
+    if (dailyEl) {
+        dailyEl.textContent = lesson.daily;
+    }
+
+    const factEl = document.getElementById("learning-popup-fact");
+    if (factEl) {
+        const useGeneral = !categoriesMissed.length && !categoriesMastered.length;
+        factEl.textContent = useGeneral ? generalCyberFact : lesson.fact;
+    }
+}
+
+function showLearningPopup(success) {
+    buildLearningPopupContent(success);
+    const popup = document.getElementById("learning-popup");
+    if (!popup) {
+        return;
+    }
+    popup.classList.remove("hidden");
+    requestAnimationFrame(() => popup.classList.add("show"));
+    popup.setAttribute("aria-hidden", "false");
+    const cta = document.getElementById("learningPopupCta");
+    if (cta) {
+        cta.focus();
+    }
+}
+
+function hideLearningPopup() {
+    const popup = document.getElementById("learning-popup");
+    if (!popup) {
+        return;
+    }
+    popup.classList.remove("show");
+    popup.classList.add("hidden");
+    popup.setAttribute("aria-hidden", "true");
+}
+
+function initLearningPopup() {
+    const close = document.getElementById("learningPopupClose");
+    const cta = document.getElementById("learningPopupCta");
+    const backdrop = document.getElementById("learningPopupBackdrop");
+    if (close) close.addEventListener("click", hideLearningPopup);
+    if (cta) cta.addEventListener("click", hideLearningPopup);
+    if (backdrop) backdrop.addEventListener("click", hideLearningPopup);
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            const popup = document.getElementById("learning-popup");
+            if (popup && popup.classList.contains("show")) {
+                hideLearningPopup();
+            }
+        }
+    });
+}
+
 function showFailureOverlay() {
     const overlay = document.getElementById("failure-overlay");
     overlay.classList.remove("hidden");
@@ -857,6 +971,7 @@ function finishMission(success) {
     progress.style.width = "100%";
     options.innerHTML = "";
 
+    let learningPopupDelay = 2200;
     if (success) {
         const rank = score >= 340 ? "Elite Defender" : score >= 220 ? "Security Analyst" : "Rookie Responder";
         document.getElementById("question").textContent = "Mission Accomplished";
@@ -871,6 +986,7 @@ function finishMission(success) {
         const perfectTimelyRun = correctAnswers === questions.length && timeoutCount === 0 && lives === 3;
         if (perfectTimelyRun && canShowBadgeMaster) {
             showBadgeMasterOverlay();
+            learningPopupDelay = 4100;
         }
     } else {
         document.getElementById("question").textContent = "Mission Failed";
@@ -882,6 +998,7 @@ function finishMission(success) {
         document.getElementById("escape-status").style.color = "#b91c1c";
         document.getElementById("courses").classList.add("burn-high");
         showFailureOverlay();
+        learningPopupDelay = 3900;
     }
 
     restart.classList.remove("hidden");
@@ -897,6 +1014,10 @@ function finishMission(success) {
         showSection("dashboard");
         showToast();
     }, 2000);
+
+    setTimeout(() => {
+        showLearningPopup(success);
+    }, learningPopupDelay);
 }
 
 function resolveAnswer(selected, isTimeout) {
@@ -1261,5 +1382,38 @@ async function initializeApp() {
     updateTrainingButtonLabels();
 }
 
+const THEME_KEY = "appTheme";
+
+function getCurrentTheme() {
+    return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+}
+
+function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    const btn = document.getElementById("themeToggleBtn");
+    if (btn) {
+        btn.textContent = theme === "dark" ? "Light" : "Dark";
+        btn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+    }
+}
+
+function toggleTheme() {
+    const next = getCurrentTheme() === "dark" ? "light" : "dark";
+    try {
+        localStorage.setItem(THEME_KEY, next);
+    } catch {}
+    applyTheme(next);
+}
+
+function initThemeToggle() {
+    applyTheme(getCurrentTheme());
+    const btn = document.getElementById("themeToggleBtn");
+    if (btn) {
+        btn.addEventListener("click", toggleTheme);
+    }
+}
+
+initThemeToggle();
+initLearningPopup();
 initializeApp();
 initUserAvatarControls();

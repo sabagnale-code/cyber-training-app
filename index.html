@@ -1,8 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Cybersecurity Training</title>
     <link rel="stylesheet" href="style.css">
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem("appTheme");
+                var theme = (saved === "dark" || saved === "light")
+                    ? saved
+                    : (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+                document.documentElement.setAttribute("data-theme", theme);
+            } catch (e) {
+                document.documentElement.setAttribute("data-theme", "light");
+            }
+        })();
+    </script>
 </head>
 
 <body>
@@ -44,6 +59,7 @@
                 <span id="welcomeText" class="status-pill">Welcome</span>
                 <button class="mode-btn" onclick="switchMode('user')">User View</button>
                 <button class="mode-btn" onclick="switchMode('admin')">Admin View</button>
+                <button id="themeToggleBtn" class="mode-btn theme-toggle-btn" type="button" aria-label="Toggle light/dark theme" title="Toggle light/dark theme">Dark</button>
                 <span class="status-pill">Live Session</span>
             </div>
         </header>
@@ -500,6 +516,32 @@
         <p class="badge-unlock-kicker">New Badge Unlocked</p>
         <h3 id="badge-unlock-title">Badge Name</h3>
         <p id="badge-unlock-text">You earned this badge.</p>
+    </div>
+</div>
+
+<div id="learning-popup" class="learning-popup hidden" role="dialog" aria-modal="true" aria-labelledby="learning-popup-title" aria-hidden="true">
+    <div class="learning-popup-backdrop" id="learningPopupBackdrop"></div>
+    <div class="learning-popup-card" role="document">
+        <button type="button" class="learning-popup-close" id="learningPopupClose" aria-label="Close lesson">&times;</button>
+        <p class="learning-popup-kicker">Today's Cyber Lesson</p>
+        <h2 id="learning-popup-title">What you learned</h2>
+
+        <section class="learning-popup-section">
+            <h3>Key takeaways</h3>
+            <ul id="learning-popup-takeaways"></ul>
+        </section>
+
+        <section class="learning-popup-section">
+            <h3>Why it matters in daily life</h3>
+            <p id="learning-popup-daily"></p>
+        </section>
+
+        <section class="learning-popup-section learning-popup-fact">
+            <h3>Fun fact</h3>
+            <p id="learning-popup-fact"></p>
+        </section>
+
+        <button type="button" class="settings-action-btn learning-popup-cta" id="learningPopupCta">Got it</button>
     </div>
 </div>
 
