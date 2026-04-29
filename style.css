@@ -732,6 +732,29 @@ body {
     background: #1e293b;
 }
 
+.learning-summary {
+    margin-top: 14px;
+    border: 1px solid #dbeafe;
+    background: #eff6ff;
+    border-radius: 12px;
+    padding: 12px 14px;
+}
+
+.learning-summary h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    color: #1e3a8a;
+}
+
+.learning-summary ul {
+    margin: 0;
+    padding-left: 18px;
+    display: grid;
+    gap: 6px;
+    color: #1e293b;
+    font-size: 14px;
+}
+
 .leaderboard {
     margin-top: 18px;
     border-top: 1px solid #e2e8f0;

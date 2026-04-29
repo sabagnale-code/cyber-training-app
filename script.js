@@ -79,6 +79,7 @@ let missionPaused = false;
 let currentRole = "admin";
 let cloudSaveTimer = null;
 let canShowBadgeMaster = false;
+let missionResults = [];
 
 // Cloud sync toggle (for shared leaderboard across devices/users).
 // 1) Set CLOUD_SYNC_ENABLED = true
@@ -789,6 +790,61 @@ function loadQuestion() {
     startTimer(true);
 }
 
+function renderLearningSummary(success) {
+    const summaryBox = document.getElementById("learning-summary");
+    const summaryList = document.getElementById("learning-list");
+    if (!summaryBox || !summaryList) {
+        return;
+    }
+
+    summaryList.innerHTML = "";
+    const mistakes = missionResults.filter((result) => !result.correct);
+    const strengths = missionResults.filter((result) => result.correct);
+    const categoriesMissed = [...new Set(mistakes.map((result) => result.category))];
+    const categoriesMastered = [...new Set(strengths.map((result) => result.category))];
+    const dailyTipsByCategory = {
+        "Social Engineering": "Pause before you click: verify urgent requests in Teams/Slack or by phone before sharing anything.",
+        "Device Safety": "Do not plug in unknown USB devices. Hand them to IT/security so they can inspect safely.",
+        "Password Security": "Use a password manager and unique passphrases so one breach cannot unlock multiple accounts.",
+        "Secure Data Handling": "Share sensitive files only through approved encrypted tools, never open public links.",
+        "Physical Security": "Do not tailgate people into secure areas. Ask for badge check or send them to reception."
+    };
+
+    const lines = [];
+    lines.push(
+        success
+            ? "You completed the mission and practiced decision-making under pressure."
+            : "You practiced real incident choices and saw where attackers can gain ground."
+    );
+    lines.push("Daily habit: if something feels urgent, unusual, or secretive, verify it before you act.");
+    if (categoriesMastered.length) {
+        lines.push(`Strong areas: ${categoriesMastered.join(", ")}.`);
+    }
+    if (categoriesMissed.length) {
+        lines.push(`Review next: ${categoriesMissed.join(", ")}.`);
+    }
+    categoriesMissed.slice(0, 2).forEach((category) => {
+        if (dailyTipsByCategory[category]) {
+            lines.push(`Everyday tip (${category}): ${dailyTipsByCategory[category]}`);
+        }
+    });
+    mistakes.slice(0, 2).forEach((result) => {
+        lines.push(`${result.category}: ${result.reason}`);
+    });
+    if (timeoutCount > 0) {
+        lines.push("Speed matters too: quick, safe responses prevent avoidable security gaps.");
+    }
+    lines.push("Current threat watch: AI-assisted phishing and fake login pages are common, so always verify sender, URL, and context.");
+
+    lines.forEach((line) => {
+        const item = document.createElement("li");
+        item.textContent = line;
+        summaryList.appendChild(item);
+    });
+
+    summaryBox.classList.remove("hidden");
+}
+
 function finishMission(success) {
     stopTimer();
     const feedback = document.getElementById("feedback");
@@ -829,6 +885,7 @@ function finishMission(success) {
     }
 
     restart.classList.remove("hidden");
+    renderLearningSummary(success);
     evaluateBadges(success);
     updateHud();
     missionStarted = false;
@@ -858,7 +915,14 @@ function resolveAnswer(selected, isTimeout) {
         button.disabled = true;
     });
 
-    if (!isTimeout && selected === q.correctAnswer) {
+    const wasCorrect = !isTimeout && selected === q.correctAnswer;
+    missionResults.push({
+        category: q.category,
+        correct: wasCorrect,
+        reason: q.reason
+    });
+
+    if (wasCorrect) {
         correctAnswers++;
         streak++;
         maxStreak = Math.max(maxStreak, streak);
@@ -923,6 +987,7 @@ function restartGame() {
     missionStarted = true;
     missionPaused = false;
     canShowBadgeMaster = true;
+    missionResults = [];
     const myEntry = leaderboard.find((entry) => entry.name === playerName);
     myEntry.score = 0;
     document.getElementById("course-options").innerHTML = `
@@ -931,6 +996,8 @@ function restartGame() {
         <button class="option" onclick="answer(2)"></button>
     `;
     document.getElementById("restart-btn").classList.add("hidden");
+    document.getElementById("learning-summary").classList.add("hidden");
+    document.getElementById("learning-list").innerHTML = "";
     updateTrainingButtonLabels();
     loadQuestion();
 }
