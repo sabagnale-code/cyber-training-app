@@ -168,18 +168,24 @@
 
                 <div class="card dashboard-card">
                     <h2>Your Avatar</h2>
-                    <div class="avatar-stage" aria-hidden="true">
-                        <div class="avatar-glow"></div>
-                        <div class="avatar-figure">
-                            <span class="avatar-head"></span>
-                            <span class="avatar-body"></span>
-                            <span class="avatar-arm left"></span>
-                            <span class="avatar-arm right"></span>
-                            <span class="avatar-leg left"></span>
-                            <span class="avatar-leg right"></span>
+                    <div class="user-avatar-block">
+                        <div class="avatar-stage user-avatar-display" id="userAvatarDisplay" aria-live="polite">
+                            <img id="userAvatarPhoto" class="user-avatar-photo hidden" alt="">
+                            <div id="userAvatarPresetScene" class="avatar-preset-scene">
+                                <div class="avatar-glow"></div>
+                                <img id="userAvatarPresetImg" class="user-avatar-preset-img" alt="" />
+                            </div>
+                        </div>
+                        <p class="subtitle user-avatar-hint">Pick a preset or upload a photo. Stored on this device only (not sent to a server).</p>
+                        <div class="avatar-preset-row" id="userAvatarPresetRow" role="radiogroup" aria-label="Preset avatars"></div>
+                        <div class="avatar-upload-row">
+                            <label class="settings-action-btn avatar-file-btn">
+                                <input type="file" id="userAvatarFileInput" accept="image/png,image/jpeg,image/webp" />
+                                Upload your picture
+                            </label>
+                            <button type="button" id="userAvatarClearPhoto" class="settings-action-btn avatar-clear-btn hidden">Remove photo</button>
                         </div>
                     </div>
-                    <p class="subtitle">Training champion in progress.</p>
                 </div>
 
                 <div class="card dashboard-card dashboard-wide">

@@ -116,6 +116,35 @@ if (!username) {
     localStorage.setItem("username", username);
 }
 
+const AVATAR_PRESET_KEY = "userAvatarPreset";
+const AVATAR_MODE_KEY = "userAvatarMode";
+const AVATAR_CUSTOM_KEY = "userAvatarCustom";
+
+const AVATAR_PRESETS = [
+    { id: "1", label: "Sentinel Bot",  style: "bottts",    seed: "sentinel"  },
+    { id: "2", label: "Cipher Bot",    style: "bottts",    seed: "cipher"    },
+    { id: "3", label: "Analyst Bot",   style: "bottts",    seed: "analyst"   },
+    { id: "4", label: "Amber Ops",     style: "bottts",    seed: "amber-ops" },
+    { id: "5", label: "Stealth Slate", style: "identicon", seed: "stealth"   },
+];
+
+function dicebearUrl(style, seed, size) {
+    const params = new URLSearchParams({ seed });
+    if (size) params.set("size", String(size));
+    return `https://api.dicebear.com/9.x/${style}/svg?${params}`;
+}
+
+function findAvatarPreset(id) {
+    return AVATAR_PRESETS.find((p) => p.id === id) || AVATAR_PRESETS[0];
+}
+
+let userAvatarPreset = localStorage.getItem(AVATAR_PRESET_KEY) || "1";
+let userAvatarMode = localStorage.getItem(AVATAR_MODE_KEY) || "preset";
+let userAvatarCustomData = localStorage.getItem(AVATAR_CUSTOM_KEY) || "";
+if (userAvatarMode === "custom" && !userAvatarCustomData) {
+    userAvatarMode = "preset";
+}
+
 const sectionTitles = {
     dashboard: "Cybersecurity Training Dashboard",
     courses: "Training Courses",
@@ -377,6 +406,9 @@ function applyRoleView() {
     document.querySelectorAll(".admin-setting").forEach((tile) => {
         tile.classList.toggle("hidden", isUser);
     });
+    if (isUser) {
+        applyUserAvatarUI();
+    }
 }
 
 function renderSettingDetail(settingKey) {
@@ -987,6 +1019,166 @@ document.getElementById("userStartTrainingBtn").addEventListener("click", () => 
     toggleTrainingState();
 });
 
+function applyUserAvatarUI() {
+    const display = document.getElementById("userAvatarDisplay");
+    const photo = document.getElementById("userAvatarPhoto");
+    const scene = document.getElementById("userAvatarPresetScene");
+    const presetImg = document.getElementById("userAvatarPresetImg");
+    const clearBtn = document.getElementById("userAvatarClearPhoto");
+    if (!display || !photo || !scene) {
+        return;
+    }
+
+    const preset = findAvatarPreset(userAvatarPreset);
+    if (presetImg) {
+        presetImg.src = dicebearUrl(preset.style, preset.seed);
+        presetImg.alt = `${preset.label} avatar`;
+    }
+
+    const usingPhoto = userAvatarMode === "custom" && userAvatarCustomData;
+    display.classList.toggle("has-custom-photo", !!usingPhoto);
+
+    if (usingPhoto) {
+        photo.src = userAvatarCustomData;
+        photo.classList.remove("hidden");
+        photo.alt = `${username} profile photo`;
+        scene.classList.add("hidden");
+        if (clearBtn) {
+            clearBtn.classList.remove("hidden");
+        }
+    } else {
+        photo.removeAttribute("src");
+        photo.classList.add("hidden");
+        photo.alt = "";
+        scene.classList.remove("hidden");
+        if (clearBtn) {
+            clearBtn.classList.add("hidden");
+        }
+    }
+
+    document.querySelectorAll(".avatar-preset-btn").forEach((btn) => {
+        const id = btn.dataset.preset;
+        const on = userAvatarMode !== "custom" && id === userAvatarPreset;
+        btn.classList.toggle("selected", on);
+        btn.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+}
+
+function persistUserAvatar() {
+    try {
+        localStorage.setItem(AVATAR_PRESET_KEY, userAvatarPreset);
+        localStorage.setItem(AVATAR_MODE_KEY, userAvatarMode);
+        if (userAvatarCustomData) {
+            localStorage.setItem(AVATAR_CUSTOM_KEY, userAvatarCustomData);
+        } else {
+            localStorage.removeItem(AVATAR_CUSTOM_KEY);
+        }
+    } catch {
+        userAvatarCustomData = "";
+        userAvatarMode = "preset";
+        localStorage.removeItem(AVATAR_CUSTOM_KEY);
+        alert("Not enough local storage for that image. Try a smaller file.");
+    }
+}
+
+function setUserAvatarPreset(id) {
+    userAvatarPreset = id;
+    userAvatarMode = "preset";
+    persistUserAvatar();
+    applyUserAvatarUI();
+}
+
+function clearUserCustomAvatar() {
+    userAvatarCustomData = "";
+    userAvatarMode = "preset";
+    localStorage.removeItem(AVATAR_CUSTOM_KEY);
+    persistUserAvatar();
+    applyUserAvatarUI();
+    const fi = document.getElementById("userAvatarFileInput");
+    if (fi) {
+        fi.value = "";
+    }
+}
+
+function resizeImageToDataUrl(file, callback) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const dataUrl = e.target.result;
+        const img = new Image();
+        img.onload = () => {
+            const maxDim = 220;
+            let w = img.width;
+            let h = img.height;
+            const scale = Math.min(maxDim / w, maxDim / h, 1);
+            w = Math.round(w * scale);
+            h = Math.round(h * scale);
+            const canvas = document.createElement("canvas");
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, w, h);
+            try {
+                callback(canvas.toDataURL("image/jpeg", 0.85));
+            } catch {
+                callback(null);
+            }
+        };
+        img.onerror = () => callback(null);
+        img.src = dataUrl;
+    };
+    reader.onerror = () => callback(null);
+    reader.readAsDataURL(file);
+}
+
+function initUserAvatarControls() {
+    const row = document.getElementById("userAvatarPresetRow");
+    if (row) {
+        row.innerHTML = AVATAR_PRESETS.map((p) => `
+            <button type="button" class="avatar-preset-btn" data-preset="${p.id}"
+                    aria-pressed="false" aria-label="Preset: ${p.label}" title="${p.label}">
+                <img src="${dicebearUrl(p.style, p.seed, 48)}" alt="" />
+            </button>`).join("");
+        row.querySelectorAll(".avatar-preset-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                setUserAvatarPreset(btn.dataset.preset);
+            });
+        });
+    }
+
+    const fileInput = document.getElementById("userAvatarFileInput");
+    if (fileInput) {
+        fileInput.addEventListener("change", () => {
+            const file = fileInput.files && fileInput.files[0];
+            if (!file) {
+                return;
+            }
+            if (!file.type.startsWith("image/")) {
+                fileInput.value = "";
+                return;
+            }
+            resizeImageToDataUrl(file, (dataUrl) => {
+                if (!dataUrl) {
+                    alert("Could not read that image. Try a JPG or PNG.");
+                    fileInput.value = "";
+                    return;
+                }
+                userAvatarCustomData = dataUrl;
+                userAvatarMode = "custom";
+                persistUserAvatar();
+                applyUserAvatarUI();
+                if (userAvatarMode !== "custom") {
+                    fileInput.value = "";
+                }
+            });
+        });
+    }
+
+    const clearBtn = document.getElementById("userAvatarClearPhoto");
+    if (clearBtn) {
+        clearBtn.addEventListener("click", clearUserCustomAvatar);
+    }
+}
+
 async function initializeApp() {
     document.getElementById("badge-master-overlay").classList.remove("show");
     document.getElementById("badge-master-overlay").classList.add("hidden");
@@ -997,8 +1189,10 @@ async function initializeApp() {
     toggleUsersManagement(false);
     updateDashboardRiskVisuals();
     document.getElementById("welcomeText").textContent = `Welcome, ${username}`;
+    applyUserAvatarUI();
     applyRoleView();
     updateTrainingButtonLabels();
 }
 
 initializeApp();
+initUserAvatarControls();

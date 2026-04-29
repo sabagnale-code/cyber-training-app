@@ -1106,71 +1106,132 @@ body {
     animation: avatar-glow 1.6s ease-in-out infinite alternate;
 }
 
-.avatar-figure {
+.user-avatar-preset-img {
     position: relative;
-    width: 64px;
-    height: 102px;
+    width: 132px;
+    height: 132px;
+    z-index: 2;
+    pointer-events: none;
+    filter: drop-shadow(0 6px 14px rgba(15, 23, 42, 0.18));
     animation: avatar-bounce 0.85s ease-in-out infinite alternate;
 }
 
-.avatar-head {
-    position: absolute;
-    left: 18px;
-    top: 0;
-    width: 28px;
-    height: 28px;
+/* User dashboard: avatar picker (presets + optional photo) */
+.user-avatar-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.user-avatar-hint {
+    margin-top: 10px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.user-avatar-display {
+    min-height: 170px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-avatar-photo {
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
-    background: #93c5fd;
+    object-fit: cover;
+    border: 4px solid #e2e8f0;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+    position: relative;
+    z-index: 2;
+    background: #f1f5f9;
 }
 
-.avatar-body {
-    position: absolute;
-    left: 22px;
-    top: 26px;
-    width: 20px;
-    height: 40px;
-    border-radius: 10px;
-    background: #2563eb;
+.avatar-preset-scene {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 150px;
 }
 
-.avatar-arm,
-.avatar-leg {
-    position: absolute;
+.avatar-preset-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+    align-items: center;
+}
+
+.avatar-preset-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 3px solid #e2e8f0;
+    padding: 0;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.avatar-preset-btn:hover {
+    transform: scale(1.05);
+}
+
+.avatar-preset-btn.selected {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px #93c5fd;
+}
+
+.avatar-preset-btn {
+    background: #f8fafc;
+    overflow: hidden;
+}
+
+.avatar-preset-btn img {
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
     display: block;
-    background: #1e40af;
-    border-radius: 999px;
+    pointer-events: none;
 }
 
-.avatar-arm {
-    width: 22px;
-    height: 6px;
-    top: 38px;
+.avatar-upload-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-top: 12px;
 }
 
-.avatar-arm.left {
-    left: 4px;
-    transform: rotate(28deg);
+.avatar-file-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin: 0;
 }
 
-.avatar-arm.right {
-    right: 4px;
-    transform: rotate(-28deg);
+.avatar-file-btn input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    font-size: 0;
+    width: 100%;
+    height: 100%;
 }
 
-.avatar-leg {
-    width: 8px;
-    height: 30px;
-    top: 64px;
+.avatar-clear-btn {
+    background: #f8fafc;
+    color: #64748b;
 }
 
-.avatar-leg.left {
-    left: 21px;
-    transform: rotate(9deg);
-}
-
-.avatar-leg.right {
-    right: 21px;
-    transform: rotate(-9deg);
+.user-avatar-display.has-custom-photo {
+    background: linear-gradient(180deg, #f8fafc, #e2e8f0);
 }
 
 .badge-card {
