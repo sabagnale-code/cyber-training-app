@@ -147,8 +147,8 @@ if (userAvatarMode === "custom" && !userAvatarCustomData) {
 }
 
 const sectionTitles = {
-    dashboard: "Cybersecurity Training Dashboard",
-    courses: "Training Courses",
+    dashboard: "Dashboard",
+    courses: "Training courses",
     reports: "Reports",
     settings: "Settings"
 };
